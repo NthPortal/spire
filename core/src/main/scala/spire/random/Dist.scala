@@ -104,11 +104,11 @@ trait Dist[@sp A] extends Any { self =>
     new DistIterator(this, gen)
 
   final def toLazyList(gen: Generator): LazyList[A] =
-    toLazyList(gen).#::(this(gen)) // lhs of right associative operators is not by-name before 2.13
+    LazyList.continually(this(gen))
 
   @deprecated("prefer toLazyList instead", "0.17.0")
   final def toStream(gen: Generator): Stream[A] =
-    this(gen) #:: toStream(gen)
+    Stream.continually(this(gen))
 
   def sample[CC[X] <: Iterable[X]](n: Int)(implicit gen: Generator, cbf: Factory[A, CC[A]]): CC[A] = {
     val b = cbf.newBuilder
